@@ -1,0 +1,91 @@
+
+#Load Library
+library (ggplot2)
+
+#load dataset
+data(carsdatabse)
+carsdatabase
+
+# 1. Print the structure of the dataset
+str(carsdatabase)
+
+# 2. List the variables in the dataset
+colnames(carsdatabase)
+
+# 3. Print the top 15 rows of the dataset
+head(carsdatabase, 15)
+
+# 4. User-defined function: Double the mpg column
+double_mpg <- function(x) { return(x * 2)}
+carsdatabase$new_mpg<- double_mpg(carsdatabase$MPG.city)  # Applying the function
+
+
+# 5. Data Manipulation: Filter rows where mpg > 10
+filtered_carsdatabase <- filter(carsdatabase, MPG.city > 10)
+filtered_carsdatabase
+
+# 6. Identify dependent & independent variables and reshape data
+
+install.packages("vctrs", dependencies = TRUE)
+library(dplyr)
+
+data(carsdatabase)
+carsdatabase
+
+dependent_var <- carsdatabase$MPG.city
+
+independent_vars <- select(carsdatabase, - MPG.city)
+
+reshaped_data <- cbind(independent_vars, dependent_var)
+
+print(reshaped_data)
+
+# 7. Remove missing values
+cleaned_carsdatabase <- na.omit(carsdatabase)
+
+# 8. Identify and remove duplicated data
+unique_carsdatabase <- distinct(carsdatabase)
+
+# 9. Reorder multiple rows in descending order by mpg
+sorted_carsdatabase <- arrange(carsdatabase, desc(MPG.city))
+
+# 10. Rename some of the column names
+carsdatabase <- rename(carsdatabase, MilesPerGallon = MPG.city, HP = Horsepower)
+
+# 11. Add new variable by multiplying weight (wt) by 2
+carsdatabase$Double_Weight <- carsdatabase$Weight * 2
+
+# 12. Create a training set using random number generator
+set.seed(123)
+train_indices <- sample(1:nrow(carsdatabase), size = 0.7 * nrow(carsdatabase))
+train_data <- carsdatabase[train_indices, ]
+
+# 13. Print the summary statistics of the dataset
+summary(carsdatabase)
+
+# 14. Perform statistical functions
+mean_mpg <- mean(carsdatabase$MilesPerGallon)
+median_mpg <- median(carsdatabase$MilesPerGallon)
+mode_mpg <- as.numeric(names(sort(table(carsdatabase$MilesPerGallon), decreasing = TRUE)[1]))
+range_mpg <- range(carsdatabase$MilesPerGallon)
+
+install.packages("ggplot2", dependencies = TRUE)
+library (ggplot2)
+
+# 15. Scatter plot for weight vs mpg
+ggplot(data = carsdatabase, aes(x = Weight, y = MilesPerGallon)) + 
+  geom_point(aes(color = factor(Cylinders  ))) + 
+  geom_smooth(se = FALSE) + 
+  labs(title = "Miles per Gallon vs Weight", x = "Weight (1000 lbs)", y = "Miles per Gallon")
+
+# 16. Side-by-side boxplot for EngineSize  vs cylinders
+ggplot(data = carsdatabase, aes(x = factor(Cylinders), y = EngineSize )) + 
+  geom_boxplot(aes(fill = factor(Cylinders))) + 
+  xlab("Number of Cylinders") + 
+  ylab("EngineSize  (cu.in.)") + 
+  ggtitle("Side-by-side boxplot for EngineSize  vs Cylinders")
+
+
+# 17. Find the correlation between mpg and wt using Pearson correlation
+correlation_mpg_Weight <- cor(carsdatabase$MilesPerGallon, carsdatabase$Weight, method = "pearson")
+print(paste("Pearson Correlation (MPG vs Weight):", correlation_mpg_Weight))
